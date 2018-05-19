@@ -57,3 +57,40 @@ ExecStart=/bin/bash -c  ' \
 ## Kubernetes
 
 Usage as a pod container:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-with-backup
+  labels:
+    app: mysql
+  namespace: default
+spec:
+  containers:
+    - name: db
+      image: mysql
+      ports:
+        - containerPort: 8080
+      volumeMounts:
+      - name: data
+        mountPath: /var/lib/mysql
+      env:
+      - name: MYSQL_ROOT_PASSWORD
+        value: example
+    - name: backup
+      image: kramergroup/volume-backup
+      volumeMounts:
+      - name: data
+        mountPath: /var/backup
+      env:
+      - name: AWS_ACCESS_KEY_ID
+        value: {Your AWS access key}
+      - name: AWS_SECRET_ACCESS_KEY
+        value: {Your AWS secret}
+      - name: BUCKET_URL
+        value: s3://{Your Bucket}/mysql-backup
+  volumes:
+  - name: data
+    emptyDir: {}
+```
