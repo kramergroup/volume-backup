@@ -23,6 +23,8 @@ Backups are incremental, and can be encrypted.
 
 # Configuration
 
+The container is configured through environment variables.
+
 | variable                | Default | Description                                                                                            |
 | ----------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
 | `BUCKET_URL`            | none    | The backup location. See [Duplicity docs](http://duplicity.nongnu.org/) for details                    |
@@ -33,25 +35,20 @@ Backups are incremental, and can be encrypted.
 
 # Usage
 
-## Sytemd unit file
+## Docker
 
-Usage as a systemd service with unit file that shows how you could use it:
+Run as a docker container in the background:
 
-```
-ExecStartPre=-/usr/bin/rm -rf ${DATA_DIR}
-ExecStartPre=-/usr/bin/mkdir ${DATA_DIR}
-
-ExecStart=/bin/bash -c  ' \     
-  /usr/bin/docker run \     
-    -v  ${DATA_DIR}:/var/backup \  
-    --name=${CONTAINER_NAME} \  
-    --rm \
-    -e AWS_ACCESS_KEY_ID=<ID> \
-    -e AWS_SECRET_ACCESS_KEY=<SECRET> \
-    -e BUCKET_URL=s3://s3.amazonaws.com/<bucket_name>/backup \
-    -e QUIET_PERIOD=60 \
-    --privileged  \
-    kramergroup\volume-backup'
+```bash
+docker run \     
+  -v  ${DATA_DIR}:/var/backup \  
+  --name=${CONTAINER_NAME} \  
+  -d --rm \
+  -e AWS_ACCESS_KEY_ID=<ID> \
+  -e AWS_SECRET_ACCESS_KEY=<SECRET> \
+  -e BUCKET_URL=s3://s3.amazonaws.com/<bucket_name>/backup \
+  -e QUIET_PERIOD=60 \
+  kramergroup/volume-backup'
 ```
 
 ## Kubernetes
@@ -93,4 +90,24 @@ spec:
   volumes:
   - name: data
     emptyDir: {}
+```
+
+## Systemd unit file
+
+Usage as a systemd service with unit file that shows how you could use it:
+
+```
+ExecStartPre=-/usr/bin/rm -rf ${DATA_DIR}
+ExecStartPre=-/usr/bin/mkdir ${DATA_DIR}
+
+ExecStart=/bin/bash -c  ' \     
+  /usr/bin/docker run \     
+    -v  ${DATA_DIR}:/var/backup \  
+    --name=${CONTAINER_NAME} \  
+    --rm \
+    -e AWS_ACCESS_KEY_ID=<ID> \
+    -e AWS_SECRET_ACCESS_KEY=<SECRET> \
+    -e BUCKET_URL=s3://s3.amazonaws.com/<bucket_name>/backup \
+    -e QUIET_PERIOD=60 \
+    kramergroup/volume-backup'
 ```
