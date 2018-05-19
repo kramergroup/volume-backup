@@ -42,18 +42,18 @@ Run as a docker container in the background:
 ```bash
 docker run \     
   -v  ${DATA_DIR}:/var/backup \  
-  --name=${CONTAINER_NAME} \  
+  --name=backup \  
   -d --rm \
   -e AWS_ACCESS_KEY_ID=<ID> \
   -e AWS_SECRET_ACCESS_KEY=<SECRET> \
   -e BUCKET_URL=s3://s3.amazonaws.com/<bucket_name>/backup \
   -e QUIET_PERIOD=60 \
-  kramergroup/volume-backup'
+  kramergroup/volume-backup
 ```
 
 ## Kubernetes
 
-Usage as a pod container:
+Usage as a pod container requires shared volumes:
 
 ```yaml
 apiVersion: v1
@@ -86,7 +86,7 @@ spec:
       - name: AWS_SECRET_ACCESS_KEY
         value: {Your AWS secret}
       - name: BUCKET_URL
-        value: s3://{Your Bucket}/mysql-backup
+        value: s3://s3.amazonaws.com/{Your Bucket}/mysql-backup
   volumes:
   - name: data
     emptyDir: {}
