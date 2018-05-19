@@ -6,7 +6,6 @@ if [[ ${AWS_ACCESS_KEY_ID} = "foobar_aws_key_id" || ${AWS_SECRET_ACCESS_KEY} = "
 fi
 
 echo "Using ${BUCKET_URL} as S3 URL"
-echo "Using ${QUIET_PERIOD} as required quiet (file system inactivity) period before executing backup"
 echo
 
 inotifywait_events="modify,attrib,move,create,delete"
@@ -15,4 +14,4 @@ cd /var/backup
 
 # start by restoring the last backup:
 # This could fail if there's nothing to restore.
-duplicity $DUPLICITY_OPTIONS --no-encryption ${AWS_BUCKET_URL} .
+duplicity $DUPLICITY_OPTIONS --no-encryption ${BUCKET_URL} .
