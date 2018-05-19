@@ -1,12 +1,11 @@
 # What this image does
 
-When you execute this image, it will monitor the data folder's file system for changes (create, modify, add, remove) - recursively.
-If a change is detected, it will wait for a 'quiet period' of N seconds, before initiating an incremental backup to the underlying store. Quiet period == no changes.
+When you execute this image, it will restore a data folder's file system from a [Duplicity](http://duplicity.nongnu.org/) backup.
 
 This is an adaption of [yaronr/backup-volume-container](https://hub.docker.com/r/yaronr/backup-volume-container/) with the following changes:
 
-- No automatic restore after start
-- Use environment variable BACKUP_URL for the backup url (e.g., `s3://s3.amazonaws.com/<bucket_name>/backup`)
+- Only restore after start
+- Use environment variable BUCKET_URL for the backup url (e.g., `s3://s3.amazonaws.com/<bucket_name>/backup`)
 
 # Features
 
@@ -25,35 +24,25 @@ Backups are incremental, and can be encrypted.
 
 | variable                | Default | Description                                                                                            |
 | ----------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
-| `BUCKET_URL`            | none    | The backup location. See [Duplicity docs](http://duplicity.nongnu.org/) for details                    |
-| `AWS_ACCESS_KEY_ID`     | none    | The S3 access key                                                                                      |
-| `AWS_SECRET_ACCESS_KEY` | none    | The secret S3 key                                                                                      |
-| `QUIET_PERIOD`          | 60      | Quiet period before backup is initiated in seconds.                                                    |
-| `DUPLICITY_OPTIONS`     | none    | Optional additional dubplicity options. See [Duplicity docs](http://duplicity.nongnu.org/) for details |
+| `BUCKET_URL`            | none    | The backup location. See [Duplicity docs](http://duplicity.nongnu.org/) for details                    |     
+| `AWS_ACCESS_KEY_ID`     | none    | The S3 access key                                                                                      |     
+| `AWS_SECRET_ACCESS_KEY` | none    | The secret S3 key                                                                                      |     
+| `QUIET_PERIOD`          | 60      | Quiet period before backup is initiated in seconds.                                                    |     
+| `DUPLICITY_OPTIONS`     | none    | Optional additional dubplicity options. See [Duplicity docs](http://duplicity.nongnu.org/) for details |     
 
 # Usage
 
-## Sytemd unit file
+## Docker
 
-Usage as a systemd service with unit file that shows how you could use it:
+This container is meant for single execution
 
 ```
-ExecStartPre=-/usr/bin/rm -rf ${DATA_DIR}
-ExecStartPre=-/usr/bin/mkdir ${DATA_DIR}
-
-ExecStart=/bin/bash -c  ' \     
-  /usr/bin/docker run \     
-    -v  ${DATA_DIR}:/var/backup \  
-    --name=${CONTAINER_NAME} \  
-    --rm \
-    -e AWS_ACCESS_KEY_ID=<ID> \
-    -e AWS_SECRET_ACCESS_KEY=<SECRET> \
-    -e BUCKET_URL=s3://s3.amazonaws.com/<bucket_name>/backup \
-    -e QUIET_PERIOD=60 \
-    --privileged  \
-    kramergroup\volume-backup'
+docker run -it --rm -v $(pwd):/var/backup \
+       -e AWS_ACCESS_KEY_ID=<your_s3_key_id> \
+       -e AWS_SECRET_ACCESS_KEY=<your_s3_access_key> \
+       -e BUCKET_URL=s3://<bucket-name> kramergroup/volume-restore
 ```
 
 ## Kubernetes
 
-Usage as a pod container:
+Usage as an initContainer:
