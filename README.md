@@ -1,6 +1,7 @@
 # What this image does
 
-When you execute this image, it will restore a data folder's file system from a [Duplicity](http://duplicity.nongnu.org/) backup.
+When you execute this image, it will restore a data folder's file system from a [Duplicity](http://duplicity.nongnu.org/) backup. It works in conjuction
+with [volume-backup](https://hub.docker.com/r/kramergroup/volume-backup/).
 
 This is an adaption of [yaronr/backup-volume-container](https://hub.docker.com/r/yaronr/backup-volume-container/) with the following changes:
 
