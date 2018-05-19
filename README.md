@@ -1,12 +1,11 @@
 # What this image does
 
-When you execute this image, it will restore a data folder's file system from a [Duplicity](http://duplicity.nongnu.org/) backup. It works in conjuction
-with [volume-backup](https://hub.docker.com/r/kramergroup/volume-backup/).
+When you execute this image, it will restore a data folder's file system from a [Duplicity](http://duplicity.nongnu.org/) backup. It works in conjunction with [volume-backup](https://hub.docker.com/r/kramergroup/volume-backup/).
 
 This is an adaption of [yaronr/backup-volume-container](https://hub.docker.com/r/yaronr/backup-volume-container/) with the following changes:
 
 - Only restore after start
-- Use environment variable BUCKET_URL for the backup url (e.g., `s3://s3.amazonaws.com/<bucket_name>/backup`)
+- Use environment variable `BUCKET_URL` for the backup url (e.g., `s3://s3.amazonaws.com/<bucket_name>/backup`)
 
 # Features
 
@@ -27,8 +26,7 @@ Backups are incremental, and can be encrypted.
 | ----------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
 | `BUCKET_URL`            | none    | The backup location. See [Duplicity docs](http://duplicity.nongnu.org/) for details                    |     
 | `AWS_ACCESS_KEY_ID`     | none    | The S3 access key                                                                                      |     
-| `AWS_SECRET_ACCESS_KEY` | none    | The secret S3 key                                                                                      |     
-| `QUIET_PERIOD`          | 60      | Quiet period before backup is initiated in seconds.                                                    |     
+| `AWS_SECRET_ACCESS_KEY` | none    | The secret S3 key                                                                                      |       
 | `DUPLICITY_OPTIONS`     | none    | Optional additional dubplicity options. See [Duplicity docs](http://duplicity.nongnu.org/) for details |     
 
 # Usage
