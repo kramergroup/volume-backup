@@ -45,3 +45,38 @@ docker run -it --rm -v $(pwd):/var/backup \
 ## Kubernetes
 
 Usage as an initContainer:
+
+```yaml
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: restore-volume
+  namespace: default
+spec:
+  template:
+    spec:
+      volumes:
+        # The data volume should map to the destination of the restore
+        - name: data
+          persistentVolumeClaim:
+            claimName: <restore-to-pvc>
+      containers:
+        - name: restore
+          image: kramergroup/volume-restore
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: <your_s3_key_id>
+            - name: AWS_SECRET_ACCESS_KEY
+              value: <your_s3_access_key>
+            - name: BUCKET_URL
+              value: 's3://<bucket-name>'
+            - name: DUPLICITY_OPTIONS
+              value: '--force'
+          resources: {}
+          volumeMounts:
+            - name: data
+              mountPath: /var/backup
+      restartPolicy: OnFailure
+```
+
+Note the additional '--force' option to Duplicity, which is needed because the mountpoint is created by Kubernetes before Duplicity is called.
