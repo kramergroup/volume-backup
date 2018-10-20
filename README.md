@@ -44,7 +44,7 @@ docker run -it --rm -v $(pwd):/var/backup \
 
 ## Kubernetes
 
-Usage as an initContainer:
+Usage as a Kubernetes Job:
 
 ```yaml
 kind: Job
